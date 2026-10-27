@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Plus } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { BRANDS } from "@/lib/brands";
 import { useCart } from "@/lib/cart";
 import ProductPrice from "@/components/shop/ProductPrice";
@@ -16,11 +15,10 @@ export default function ProductCard({ product, className = "" }) {
     <article className={cn("group relative", className)}>
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
-          <Image
+          <Imag
             src={product.image_url}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
-            fittingType="fill"
           />
           {product.badge && (
             <span className="absolute right-3 top-3 bg-cream/95 px-2.5 py-1 text-[10px] tracking-[0.18em] text-ink/70">

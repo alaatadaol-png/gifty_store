@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import StoreHero from "@/components/shop/StoreHero";
 import CategoryFilter from "@/components/shop/CategoryFilter";
 import ProductCard from "@/components/shop/ProductCard";

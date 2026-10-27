@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { productImage, productTags } from "@/lib/products";
 import ProductPrice from "@/components/shop/ProductPrice";
 
@@ -14,11 +13,11 @@ export default function ProductTile({ product }) {
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
           {image && (
-            <Image
+            <Imag
               src={image}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
-              fittingType="fill"
+              
             />
           )}
           {tag && (

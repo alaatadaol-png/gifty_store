@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { BRANDS } from "@/lib/brands";
 import { useSiteContent, contentValue } from "@/lib/siteContent";
 import { cn } from "@/lib/utils";
@@ -15,12 +14,10 @@ function Panel({ brand, position, content }) {
       to={brand.path}
       className="group relative block min-h-[64vh] overflow-hidden md:min-h-[calc(100vh-13rem)]"
     >
-      <Image
+      <Imag
         src={image}
         alt={brand.name}
-        focalPointY={position}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.06]"
-        fittingType="fill"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#17100a]/85 via-[#17100a]/30 to-[#17100a]/10 transition-opacity duration-700" />
       <div

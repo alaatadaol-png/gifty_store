@@ -1,15 +1,14 @@
 import React from "react";
-import { Image } from "@/components/ui/image";
 
 export default function StoreHero({ brand, title, kicker }) {
   return (
     <section className="relative">
       <div className="relative h-[52vh] min-h-[360px] w-full overflow-hidden">
-        <Image
+        <Imag
           src={brand.heroImage}
           alt={brand.name}
           className="h-full w-full object-cover"
-          fittingType="fill"
+          
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1206]/70 via-[#1a1206]/25 to-[#1a1206]/10" />
         <div className="absolute inset-0 flex items-end">

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Image } from "@/components/ui/image";
 import { cn } from "@/lib/utils";
 
 export default function ProductGallery({ images, name, badge }) {
@@ -10,11 +9,11 @@ export default function ProductGallery({ images, name, badge }) {
     <div>
       <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
         {current && (
-          <Image
+          <Imag
             src={current}
             alt={name}
             className="h-full w-full object-cover"
-            fittingType="fill"
+            
           />
         )}
         {badge && (
@@ -39,11 +38,11 @@ export default function ProductGallery({ images, name, badge }) {
                   : "border-transparent opacity-65 hover:opacity-100"
               )}
             >
-              <Image
+              <Imag
                 src={src}
                 alt={`${name} ${index + 1}`}
                 className="h-full w-full object-cover"
-                fittingType="fill"
+                
               />
             </button>
           ))}
