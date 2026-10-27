@@ -19,6 +19,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+import Account from '@/pages/Account';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, navigateToLogin, authError } = useAuth();
@@ -42,6 +43,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route element={<SiteLayout />}>
+      <Route path="/account" element={<Account />} />
         <Route path="/" element={<Home />} />
         <Route path="/gifts" element={<Gifts />} />
         <Route path="/accessories" element={<Accessories />} />
@@ -49,6 +51,7 @@ const AuthenticatedApp = () => {
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/contact" element={<Contact />} />
+        
       </Route>
       
       {/* Auth Routes */}

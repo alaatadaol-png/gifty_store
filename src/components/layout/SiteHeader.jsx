@@ -41,11 +41,11 @@ export default function SiteHeader() {
 
         {/* الأزرار الجانبية (تسجيل الدخول والسلة) */}
         <div className="flex items-center gap-4">
-          {/* زر تسجيل الدخول / لوحة التحكم */}
+          {/* زر الحساب الشخصي / لوحة التحكم */}
           <Link 
-            to="/login" 
+            to="/account" 
             className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-ink/5 hover:text-ink"
-            title="تسجيل الدخول / لوحة التحكم"
+            title="حسابي / لوحة التحكم"
           >
             <User className="h-5 w-5" strokeWidth={1.5} />
           </Link>
