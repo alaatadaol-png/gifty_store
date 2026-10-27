@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import ReviewStep from "@/components/shop/customizer/ReviewStep";
 import GiftSummary from "@/components/shop/customizer/GiftSummary";
 import { useCart } from "@/lib/cart";
 import { cartProduct } from "@/lib/products";
-import { formatPrice, formatMultiCurrency } from "@/lib/brands";
+import { formatMultiCurrency } from "@/lib/brands";
 import {
   blockedSizeNames,
   computeGiftTotals,
@@ -28,9 +28,9 @@ import { cn } from "@/lib/utils";
 
 const STEPS = ["الصندوق", "الحجم", "الورود", "التغليف", "الإضافات", "المعاينة"];
 
-const readList = async (name) => {
-  const result = await base44.entities[name].list("-created_date", 50);
-  return Array.isArray(result) ? result : result.items || [];
+const readList = async (entity) => {
+  const { data } = await supabase.from(entity).select("*").order("id", { ascending: false });
+  return data || [];
 };
 
 export default function GiftCustomizer({ open, onOpenChange, product }) {
@@ -58,11 +58,11 @@ export default function GiftCustomizer({ open, onOpenChange, product }) {
     setLoading(true);
 
     Promise.all([
-      readList("GiftBox"),
-      readList("GiftSize"),
-      readList("GiftFlower"),
-      readList("GiftWrapping"),
-      readList("GiftAddon"),
+      readList("gift_boxes"),
+      readList("gift_sizes"),
+      readList("gift_flowers"),
+      readList("gift_wrappings"),
+      readList("gift_addons"),
     ])
       .then(([boxes, sizes, flowers, wrappings, addons]) => {
         if (!active) return;

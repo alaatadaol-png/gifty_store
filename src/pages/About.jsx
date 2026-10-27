@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/api/supabaseClient";
-import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
 import { BRANDS, SITE } from "@/lib/brands";
 
@@ -59,11 +58,10 @@ export default function About() {
 
       <section className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 py-16 md:grid-cols-2 md:gap-16 md:px-10 md:py-24">
         <div className="relative aspect-[4/3] overflow-hidden">
-          <Image
+          <img
             src={SITE.craftImage}
             alt="تفاصيل الصناعة اليدوية"
             className="h-full w-full object-cover"
-            fittingType="fill"
           />
         </div>
         <div>
@@ -87,11 +85,10 @@ export default function About() {
         <div className="mx-auto grid max-w-[1400px] gap-8 px-5 py-16 md:grid-cols-2 md:px-10 md:py-20">
           <div className="group overflow-hidden bg-cream">
             <div className="relative aspect-[16/10] overflow-hidden">
-              <Image
+              <img
                 src={BRANDS.zarqa.heroImage}
                 alt="خرزة زرقة"
                 className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                fittingType="fill"
               />
             </div>
             <div className="p-7">
@@ -109,11 +106,10 @@ export default function About() {
 
           <div className="group overflow-hidden bg-cream">
             <div className="relative aspect-[16/10] overflow-hidden">
-              <Image
+              <img
                 src={BRANDS.mersal.heroImage}
                 alt="MERSAL ALHOB"
                 className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                fittingType="fill"
               />
             </div>
             <div className="p-7">
