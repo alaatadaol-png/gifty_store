@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import ProductCard from "@/components/shop/ProductCard";
 
 export default function FeaturedPicks() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    base44.entities.Product
-      .filter({ featured: true }, { sort: "-created_date", limit: 4 })
-      .then((page) => setProducts(page.items || []))
-      .catch(() => setProducts([]));
+    // جلب أحدث 4 منتجات
+    supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(4)
+      .then(({ data }) => {
+        if (data) setProducts(data);
+      });
   }, []);
 
   if (products.length === 0) return null;
@@ -23,22 +28,14 @@ export default function FeaturedPicks() {
           <h2 className="mt-2 font-heading text-4xl md:text-5xl">قطع يحبّها الجميع</h2>
         </div>
         <div className="flex items-center gap-6 text-sm">
-          <Link to="/gifts" className="text-ink/60 underline decoration-gold/50 decoration-1 underline-offset-4 transition-colors hover:text-ink">
-            الهدايا والورود
-          </Link>
-          <Link to="/accessories" className="text-ink/60 underline decoration-gold/50 decoration-1 underline-offset-4 transition-colors hover:text-ink">
-            الاكسسوارات
-          </Link>
+          <Link to="/gifts" className="text-ink/60 underline decoration-gold/50 decoration-1 underline-offset-4 transition-colors hover:text-ink">الهدايا والورود</Link>
+          <Link to="/accessories" className="text-ink/60 underline decoration-gold/50 decoration-1 underline-offset-4 transition-colors hover:text-ink">الاكسسوارات</Link>
         </div>
       </div>
 
       <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-12 lg:grid-cols-4">
         {products.map((product, index) => (
-          <div
-            key={product.id}
-            className="reveal"
-            style={{ animationDelay: `${index * 80}ms` }}
-          >
+          <div key={product.id} className="reveal" style={{ animationDelay: `${index * 80}ms` }}>
             <ProductCard product={product} />
           </div>
         ))}

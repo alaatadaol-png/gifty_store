@@ -4,19 +4,16 @@ import { formatPrice } from "@/lib/brands";
 
 const money = (value, currency) => formatPrice(Number(value || 0), currency);
 
-// إدارة خيارات تخصيص الهدايا والإكسسوارات
 export default function AdminCustomization() {
   return (
     <div>
       <h2 className="font-heading text-2xl">خيارات التخصيص</h2>
-      <p className="mt-1 text-sm text-ink/50">
-        أضيفي أو عدّلي أسعار الصناديق والأحجام والورود والتغليف والإضافات وخيارات الإكسسوارات.
-      </p>
+      <p className="mt-1 text-sm text-ink/50">أضيفي أو عدّلي أسعار الصناديق والأحجام والورود والتغليف والإضافات وخيارات الإكسسوارات.</p>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
         <OptionsManager
           title="صناديق الهدايا"
-          entity="GiftBox"
+          entity="gift_boxes"
           fields={[
             { key: "name", label: "اسم الصندوق" },
             { key: "price", label: "السعر", type: "number", withCurrency: true },
@@ -30,7 +27,7 @@ export default function AdminCustomization() {
 
         <OptionsManager
           title="الأحجام"
-          entity="GiftSize"
+          entity="gift_sizes"
           fields={[
             { key: "name", label: "اسم الحجم" },
             { key: "price", label: "السعر", type: "number", withCurrency: true },
@@ -45,7 +42,7 @@ export default function AdminCustomization() {
 
         <OptionsManager
           title="الورود"
-          entity="GiftFlower"
+          entity="gift_flowers"
           fields={[
             { key: "name", label: "نوع الوردة" },
             { key: "price_per_stem", label: "سعر الوردة", type: "number", withCurrency: true },
@@ -58,7 +55,7 @@ export default function AdminCustomization() {
 
         <OptionsManager
           title="التغليف"
-          entity="GiftWrapping"
+          entity="gift_wrappings"
           fields={[
             { key: "name", label: "نوع التغليف" },
             { key: "price", label: "السعر", type: "number", withCurrency: true },
@@ -68,7 +65,7 @@ export default function AdminCustomization() {
 
         <OptionsManager
           title="الإضافات"
-          entity="GiftAddon"
+          entity="gift_addons"
           fields={[
             { key: "name", label: "اسم الإضافة" },
             { key: "price", label: "السعر", type: "number", withCurrency: true },
@@ -78,7 +75,7 @@ export default function AdminCustomization() {
 
         <OptionsManager
           title="خيارات الإكسسوارات"
-          entity="AccessoryOption"
+          entity="accessory_options"
           fields={[
             { key: "option_name", label: "اسم الخيار" },
             { key: "option_values", label: "القيم (مفصولة بفاصلة)" },
