@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import { Spinner, StatCard } from "@/components/admin/parts";
 import { formatPrice } from "@/lib/brands";
 
@@ -8,17 +8,33 @@ export default function AdminOverview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      base44.entities.Order.count({ status: "قيد الانتظار" }),
-      base44.entities.Order.aggregate({ sum: ["total"] }),
-      base44.entities.Product.count({}),
-    ])
-      .then(([newOrders, salesAgg, products]) => {
-        const sales = salesAgg?.rows?.[0]?.sum_total || 0;
-        setStats({ newOrders, sales, products });
+    const fetchStats = async () => {
+      try {
+        // جلب الطلبات
+        const { data: orders } = await supabase.from("orders").select("*");
+        // جلب المنتجات
+        const { count: productsCount } = await supabase.from("products").select("*", { count: 'exact', head: true });
+
+        let newOrders = 0;
+        let totalSales = 0;
+
+        if (orders) {
+          newOrders = orders.filter(o => o.status === "قيد الانتظار").length;
+          totalSales = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+        }
+
+        setStats({ 
+          newOrders, 
+          sales: totalSales, 
+          products: productsCount || 0 
+        });
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+    fetchStats();
   }, []);
 
   if (loading) return <Spinner />;
@@ -29,21 +45,9 @@ export default function AdminOverview() {
       <p className="mt-1 text-sm text-ink/50">نظرة سريعة على أداء المتجر.</p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <StatCard
-          label="طلبات جديدة"
-          value={stats.newOrders}
-          hint="قيد الانتظار"
-        />
-        <StatCard
-          label="إجمالي المبيعات"
-          value={formatPrice(stats.sales)}
-          hint="من جميع الطلبات"
-        />
-        <StatCard
-          label="المنتجات النشطة"
-          value={stats.products}
-          hint="في الكتالوج"
-        />
+        <StatCard label="طلبات جديدة" value={stats.newOrders} hint="قيد الانتظار" />
+        <StatCard label="إجمالي المبيعات" value={formatPrice(stats.sales)} hint="من جميع الطلبات" />
+        <StatCard label="المنتجات النشطة" value={stats.products} hint="في الكتالوج" />
       </div>
     </div>
   );

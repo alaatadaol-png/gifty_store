@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,12 +26,10 @@ export default function AdminStaticPages() {
   const [saving, setSaving] = useState("");
 
   useEffect(() => {
-    base44.entities.StaticPage
-      .list("-created_date", 50)
-      .then((result) => {
-        const list = Array.isArray(result) ? result : result.items || [];
-        const aboutPage = list.find((page) => page.title === ABOUT_TITLE);
-        const faqPage = list.find((page) => page.title === FAQ_TITLE);
+    supabase.from("static_pages").select("*").then(({ data }) => {
+      if (data) {
+        const aboutPage = data.find((page) => page.title === ABOUT_TITLE);
+        const faqPage = data.find((page) => page.title === FAQ_TITLE);
         if (aboutPage) {
           setAbout(aboutPage.content || "");
           setAboutId(aboutPage.id);
@@ -40,48 +38,38 @@ export default function AdminStaticPages() {
           setFaq(parseFaq(faqPage.content));
           setFaqId(faqPage.id);
         }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+      setLoading(false);
+    });
   }, []);
 
   const saveAbout = async () => {
     setSaving("about");
     try {
       if (aboutId) {
-        await base44.entities.StaticPage.update(aboutId, { content: about });
+        await supabase.from("static_pages").update({ content: about }).eq("id", aboutId);
       } else {
-        const created = await base44.entities.StaticPage.create({
-          title: ABOUT_TITLE,
-          content: about,
-        });
-        setAboutId(created.id);
+        const { data } = await supabase.from("static_pages").insert([{ title: ABOUT_TITLE, content: about }]).select().single();
+        if (data) setAboutId(data.id);
       }
     } finally {
       setSaving("");
     }
   };
 
-  const updateFaqRow = (index, key, value) =>
-    setFaq((current) =>
-      current.map((row, i) => (i === index ? { ...row, [key]: value } : row))
-    );
+  const updateFaqRow = (index, key, value) => setFaq((current) => current.map((row, i) => (i === index ? { ...row, [key]: value } : row)));
   const addFaqRow = () => setFaq((current) => [...current, { q: "", a: "" }]);
-  const removeFaqRow = (index) =>
-    setFaq((current) => current.filter((_, i) => i !== index));
+  const removeFaqRow = (index) => setFaq((current) => current.filter((_, i) => i !== index));
 
   const saveFaq = async () => {
     setSaving("faq");
     try {
       const content = JSON.stringify(faq.filter((row) => row.q.trim() || row.a.trim()));
       if (faqId) {
-        await base44.entities.StaticPage.update(faqId, { content });
+        await supabase.from("static_pages").update({ content }).eq("id", faqId);
       } else {
-        const created = await base44.entities.StaticPage.create({
-          title: FAQ_TITLE,
-          content,
-        });
-        setFaqId(created.id);
+        const { data } = await supabase.from("static_pages").insert([{ title: FAQ_TITLE, content }]).select().single();
+        if (data) setFaqId(data.id);
       }
     } finally {
       setSaving("");
@@ -98,19 +86,8 @@ export default function AdminStaticPages() {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div className="border border-ink/10 bg-white/60 p-5">
           <h3 className="font-heading text-lg">من نحن</h3>
-          <Textarea
-            value={about}
-            onChange={(event) => setAbout(event.target.value)}
-            rows={10}
-            placeholder="نص مقدمة صفحة «من نحن»..."
-            className="mt-3 rounded-none border-ink/20 bg-white text-sm leading-relaxed"
-          />
-          <Button
-            type="button"
-            onClick={saveAbout}
-            disabled={saving === "about"}
-            className="mt-3 rounded-none bg-royal px-6 py-3 text-xs text-cream hover:bg-royal/90"
-          >
+          <Textarea value={about} onChange={(e) => setAbout(e.target.value)} rows={10} placeholder="نص مقدمة صفحة «من نحن»..." className="mt-3 rounded-none border-ink/20 bg-white text-sm leading-relaxed" />
+          <Button type="button" onClick={saveAbout} disabled={saving === "about"} className="mt-3 rounded-none bg-royal px-6 py-3 text-xs text-cream hover:bg-royal/90">
             {saving === "about" ? "جارٍ الحفظ..." : "حفظ"}
           </Button>
         </div>
@@ -118,51 +95,19 @@ export default function AdminStaticPages() {
         <div className="border border-ink/10 bg-white/60 p-5">
           <div className="flex items-center justify-between">
             <h3 className="font-heading text-lg">الأسئلة الشائعة</h3>
-            <Button
-              type="button"
-              onClick={addFaqRow}
-              className="rounded-none bg-ink px-4 py-2 text-xs text-cream hover:bg-ink/90"
-            >
-              إضافة سؤال
-            </Button>
+            <Button type="button" onClick={addFaqRow} className="rounded-none bg-ink px-4 py-2 text-xs text-cream hover:bg-ink/90">إضافة سؤال</Button>
           </div>
 
           <div className="mt-3 space-y-3">
-            {faq.length === 0 && (
-              <p className="text-xs text-ink/40">لا توجد أسئلة بعد. أضيفي أول سؤال.</p>
-            )}
             {faq.map((row, index) => (
               <div key={index} className="border border-ink/8 bg-white p-3">
-                <Input
-                  value={row.q}
-                  onChange={(event) => updateFaqRow(index, "q", event.target.value)}
-                  placeholder="السؤال"
-                  className="rounded-none border-ink/20 text-sm"
-                />
-                <Textarea
-                  value={row.a}
-                  onChange={(event) => updateFaqRow(index, "a", event.target.value)}
-                  rows={2}
-                  placeholder="الجواب"
-                  className="mt-2 rounded-none border-ink/20 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeFaqRow(index)}
-                  className="mt-2 text-xs text-[#9c5c5c] hover:text-[#7e4848]"
-                >
-                  حذف السؤال
-                </button>
+                <Input value={row.q} onChange={(e) => updateFaqRow(index, "q", e.target.value)} placeholder="السؤال" className="rounded-none border-ink/20 text-sm" />
+                <Textarea value={row.a} onChange={(e) => updateFaqRow(index, "a", e.target.value)} rows={2} placeholder="الجواب" className="mt-2 rounded-none border-ink/20 text-sm" />
+                <button type="button" onClick={() => removeFaqRow(index)} className="mt-2 text-xs text-[#9c5c5c] hover:text-[#7e4848]">حذف السؤال</button>
               </div>
             ))}
           </div>
-
-          <Button
-            type="button"
-            onClick={saveFaq}
-            disabled={saving === "faq"}
-            className="mt-4 rounded-none bg-royal px-6 py-3 text-xs text-cream hover:bg-royal/90"
-          >
+          <Button type="button" onClick={saveFaq} disabled={saving === "faq"} className="mt-4 rounded-none bg-royal px-6 py-3 text-xs text-cream hover:bg-royal/90">
             {saving === "faq" ? "جارٍ الحفظ..." : "حفظ الأسئلة"}
           </Button>
         </div>
