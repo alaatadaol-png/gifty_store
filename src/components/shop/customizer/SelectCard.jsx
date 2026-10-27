@@ -1,6 +1,5 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { formatPrice } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
@@ -22,11 +21,11 @@ export default function SelectCard({ selected, onClick, disabled, title, subtitl
     >
       <div className="relative aspect-square w-full overflow-hidden bg-ink/5">
         {image ? (
-          <Image
+          // تم تصحيح الخطأ الإملائي هنا (كان <Imag[] وأصبح <img)
+          <img
             src={image}
             alt={title}
             className="h-full w-full object-cover"
-            fittingType="fill"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center px-3">
