@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Facebook, Instagram, Mail, MessageCircle, Send } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,10 +24,15 @@ export default function Contact() {
     setError("");
     setSending(true);
     try {
-      await base44.entities.ContactMessage.create(form);
+      const { error: dbError } = await supabase
+        .from('contact_messages')
+        .insert([form]);
+
+      if (dbError) throw dbError;
+      
       setSent(true);
       setForm(INITIAL);
-    } catch {
+    } catch (err) {
       setError("تعذّر إرسال الرسالة، حاولي مرة أخرى أو راسلينا على إنستغرام.");
     } finally {
       setSending(false);
