@@ -14,7 +14,7 @@ function Panel({ brand, position, content }) {
       to={brand.path}
       className="group relative block min-h-[64vh] overflow-hidden md:min-h-[calc(100vh-13rem)]"
     >
-      <Img
+      <img
         src={image}
         alt={brand.name}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.06]"
