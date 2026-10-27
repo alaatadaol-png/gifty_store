@@ -17,7 +17,7 @@ export function useActivePromotions() {
         .from('promotions')
         .select('*')
         .eq('is_active', true)
-        .order('created_at', { ascending: false })
+        .order('id', { ascending: false }) // تم التعديل هنا
         .limit(50)
         .then(({ data, error }) => {
           if (error || !data) {

@@ -3,7 +3,6 @@ import { Megaphone, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useActivePromotions, latestActivePromotion } from "@/lib/promotions";
 
-// شريط إعلاني في أعلى الصفحة الرئيسية يظهر أحدث عرض نشط
 export default function PromoBanner() {
   const promotions = useActivePromotions();
   const promo = latestActivePromotion(promotions);
