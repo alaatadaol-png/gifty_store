@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { supabase } from "@/api/supabaseClient"; // تم التعديل
-import { Image } from "@/components/ui/image";
+import { supabase } from "@/api/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -15,11 +14,11 @@ function CartLine({ item, onRemove, onQuantity }) {
   return (
     <li className="flex gap-4 border-b border-ink/8 py-5">
       <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-ink/5">
-        <Image
+        {/* تم استبدال Image بـ img هنا */}
+        <img
           src={item.image_url}
           alt={item.name}
           className="h-full w-full object-cover"
-          fittingType="fill"
         />
       </div>
       <div className="min-w-0 flex-1">
@@ -81,14 +80,13 @@ export default function CartDrawer() {
     setSaving(true);
     
     try {
-      // حفظ الطلب في Supabase
       const { data, error } = await supabase
         .from('orders')
         .insert([
           {
             customer_name: form.customer_name,
             phone: form.phone,
-            address: form.city, // نستخدم city كعنوان
+            address: form.city,
             items: lines, 
             items_summary: [...lines, `المجموع: ${formatMultiCurrency(totalsByCurrency)}`].join("\n"),
             sub_total: total,
