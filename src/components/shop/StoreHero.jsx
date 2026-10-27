@@ -4,7 +4,7 @@ export default function StoreHero({ brand, title, kicker }) {
   return (
     <section className="relative">
       <div className="relative h-[52vh] min-h-[360px] w-full overflow-hidden">
-        <Imag
+        <Img
           src={brand.heroImage}
           alt={brand.name}
           className="h-full w-full object-cover"

@@ -15,7 +15,7 @@ export default function ProductCard({ product, className = "" }) {
     <article className={cn("group relative", className)}>
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
-          <Imag
+          <Img
             src={product.image_url}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"

@@ -21,7 +21,7 @@ export default function SelectCard({ selected, onClick, disabled, title, subtitl
     >
       <div className="relative aspect-square w-full overflow-hidden bg-ink/5">
         {image ? (
-          // تم تصحيح الخطأ الإملائي هنا (كان <Imag[] وأصبح <img)
+          // تم تصحيح الخطأ الإملائي هنا (كان <Img[] وأصبح <img)
           <img
             src={image}
             alt={title}

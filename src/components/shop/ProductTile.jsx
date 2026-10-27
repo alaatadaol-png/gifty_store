@@ -13,7 +13,7 @@ export default function ProductTile({ product }) {
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
           {image && (
-            <Imag
+            <Img
               src={image}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"

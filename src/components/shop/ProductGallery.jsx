@@ -9,7 +9,7 @@ export default function ProductGallery({ images, name, badge }) {
     <div>
       <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
         {current && (
-          <Imag
+          <Img
             src={current}
             alt={name}
             className="h-full w-full object-cover"
@@ -38,7 +38,7 @@ export default function ProductGallery({ images, name, badge }) {
                   : "border-transparent opacity-65 hover:opacity-100"
               )}
             >
-              <Imag
+              <Img
                 src={src}
                 alt={`${name} ${index + 1}`}
                 className="h-full w-full object-cover"
