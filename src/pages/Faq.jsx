@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import {
   Accordion,
   AccordionContent,
@@ -36,20 +36,21 @@ export default function Faq() {
   const [faqs, setFaqs] = useState([]);
 
   useEffect(() => {
-    base44.entities.StaticPage
-      .filter({ title: "الأسئلة الشائعة" }, { limit: 1 })
-      .then((page) => {
-        const item = (page.items || [])[0];
-        if (item?.content) {
+    supabase
+      .from("static_pages")
+      .select("*")
+      .eq("title", "الأسئلة الشائعة")
+      .single()
+      .then(({ data, error }) => {
+        if (data && data.content) {
           try {
-            const parsed = JSON.parse(item.content);
+            const parsed = JSON.parse(data.content);
             if (Array.isArray(parsed) && parsed.length) setFaqs(parsed);
           } catch {
             /* ignore malformed content */
           }
         }
-      })
-      .catch(() => {});
+      });
   }, []);
 
   const items = faqs.length ? faqs : FAQS;

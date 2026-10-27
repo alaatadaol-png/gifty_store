@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
 import { BRANDS, SITE } from "@/lib/brands";
@@ -31,13 +31,16 @@ export default function About() {
   const [intro, setIntro] = useState(DEFAULT_INTRO);
 
   useEffect(() => {
-    base44.entities.StaticPage
-      .filter({ title: "من نحن" }, { limit: 1 })
-      .then((page) => {
-        const item = (page.items || [])[0];
-        if (item?.content) setIntro(item.content);
-      })
-      .catch(() => {});
+    supabase
+      .from("static_pages")
+      .select("*")
+      .eq("title", "من نحن")
+      .single()
+      .then(({ data, error }) => {
+        if (data && data.content) {
+          setIntro(data.content);
+        }
+      });
   }, []);
 
   return (
