@@ -1,53 +1,35 @@
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
 
-export default function ProductGallery({ images, name, badge }) {
+export default function ProductGallery({ images = [], name }) {
   const [active, setActive] = useState(0);
-  const current = images[active] || images[0];
+  const list = images.length > 0 ? images : [""];
 
   return (
-    <div>
-      <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
-        {current && (
-          <Img
-            src={current}
-            alt={name}
-            className="h-full w-full object-cover"
-            
-          />
-        )}
-        {badge && (
-          <span className="absolute right-4 top-4 bg-cream/95 px-3 py-1.5 text-[10px] tracking-[0.18em] text-ink/70">
-            {badge}
-          </span>
-        )}
-      </div>
-
-      {images.length > 1 && (
-        <div className="mt-3 grid grid-cols-4 gap-3">
-          {images.map((src, index) => (
+    <div className="flex flex-col-reverse md:flex-row gap-4">
+      {list.length > 1 && (
+        <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-visible">
+          {list.map((img, i) => (
             <button
-              key={`${src}-${index}`}
-              type="button"
-              onClick={() => setActive(index)}
-              aria-label={`صورة ${index + 1}`}
-              className={cn(
-                "relative aspect-square overflow-hidden border bg-ink/5 transition-opacity",
-                index === active
-                  ? "border-ink"
-                  : "border-transparent opacity-65 hover:opacity-100"
-              )}
+              key={i}
+              onClick={() => setActive(i)}
+              className={`relative h-20 w-16 shrink-0 overflow-hidden border-2 transition-all ${
+                active === i ? "border-ink" : "border-transparent opacity-60 hover:opacity-100"
+              }`}
             >
-              <Img
-                src={src}
-                alt={`${name} ${index + 1}`}
-                className="h-full w-full object-cover"
-                
-              />
+              <img src={img} alt={`${name} - ${i}`} className="h-full w-full object-cover" />
             </button>
           ))}
         </div>
       )}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-ink/5 flex-1">
+        {list[active] && (
+          <img
+            src={list[active]}
+            alt={name}
+            className="h-full w-full object-cover"
+          />
+        )}
+      </div>
     </div>
   );
 }
