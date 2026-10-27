@@ -3,7 +3,6 @@ import { Check } from "lucide-react";
 import { formatPrice } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
-// بطاقة اختيار مع صورة (الصناديق)
 export default function SelectCard({ selected, onClick, disabled, title, subtitle, price, currency, image }) {
   return (
     <button
@@ -21,7 +20,7 @@ export default function SelectCard({ selected, onClick, disabled, title, subtitl
     >
       <div className="relative aspect-square w-full overflow-hidden bg-ink/5">
         {image ? (
-          // تم تصحيح الخطأ الإملائي هنا (كان <Img[] وأصبح <img)
+          /* هنا يجب أن تكون <img وليس <Imag */
           <img
             src={image}
             alt={title}
