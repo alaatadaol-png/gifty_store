@@ -26,6 +26,7 @@ const SECTIONS = [
 
 export default function Admin() {
   const { user, isAuthenticated, isLoadingAuth, navigateToLogin, logout } = useAuth();
+    console.log("User Data in Admin Page:", user);
   const [active, setActive] = useState("overview");
 
   useEffect(() => {
