@@ -33,7 +33,7 @@ export default function ProductForm({ product, onClose, onSave }) {
     try {
       let imageUrl = product?.images?.[0] || null;
 
-      // 1. رفع الصورة إذا تم اختيارها
+      // 1. رفع الصورة
       if (imageFile) {
         const fileExt = imageFile.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
@@ -41,7 +41,10 @@ export default function ProductForm({ product, onClose, onSave }) {
           .from("product-images")
           .upload(fileName, imageFile);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("Upload Error:", uploadError);
+          throw new Error("فشل رفع الصورة: " + uploadError.message);
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from("product-images")
@@ -50,24 +53,26 @@ export default function ProductForm({ product, onClose, onSave }) {
         imageUrl = publicUrl;
       }
 
-      // 2. تجهيز البيانات للحفظ
+      // 2. تجهيز البيانات
       const payload = {
         ...formData,
         base_price: Number(formData.base_price),
         images: imageUrl ? [imageUrl] : [],
       };
 
-      // 3. الحفظ أو التحديث
+      // 3. الحفظ أو التحديث (مع التحقق من الأخطاء)
       if (product) {
-        await supabase.from("products").update(payload).eq("id", product.id);
+        const { error } = await supabase.from("products").update(payload).eq("id", product.id);
+        if (error) throw new Error("فشل تعديل المنتج: " + error.message);
       } else {
-        await supabase.from("products").insert([payload]);
+        const { error } = await supabase.from("products").insert([payload]);
+        if (error) throw new Error("فشل إضافة المنتج: " + error.message);
       }
 
       onSave();
     } catch (error) {
       console.error(error);
-      alert("حدث خطأ أثناء الحفظ: " + error.message);
+      alert(error.message); // سيظهر لك سبب المشكلة الحقيقي هنا
     } finally {
       setSaving(false);
     }
