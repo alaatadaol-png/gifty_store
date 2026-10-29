@@ -5,10 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
-import GoogleIcon from "@/components/GoogleIcon";
-import { toast } from "@/components/ui/use-toast";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
 export default function Register() {
@@ -17,136 +14,36 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showOtp, setShowOtp] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  if (password !== confirmPassword) {
-    setError("كلمات المرور غير متطابقة");
-    return;
-  }
-  setLoading(true);
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) throw error;
-
-    // التحقق: إذا كان تأكيد البريد معطلاً، سيعيد Supabase جلسة (session) مباشرة
-    if (data.session) {
-      // المستخدم مسجل ومصادق عليه فوراً
-      window.location.href = safeReturnTo(); 
-    } else {
-      // في حال كان تأكيد البريد مفعلاً (لأي سبب)، نعرض شاشة OTP
-      setShowOtp(true);
-    }
-  } catch (err) {
-    setError(err.message || "فشل إنشاء الحساب");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const handleVerify = async () => {
+    e.preventDefault();
     setError("");
+    if (password !== confirmPassword) {
+      setError("كلمات المرور غير متطابقة");
+      return;
+    }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.signUp({
         email,
-        token: otpCode,
-        type: 'signup'
+        password,
       });
       if (error) throw error;
-      window.location.href = safeReturnTo();
+
+      // إذا كان تأكيد البريد معطلاً في Supabase، سيعيد جلسة مباشرة
+      if (data.session) {
+        window.location.href = safeReturnTo(); 
+      } else {
+        // في حال كان تأكيد البريد مفعلاً، نعرض رسالة للمستخدم
+        alert("تم إنشاء الحساب! يرجى مراجعة بريدك الإلكتروني لتأكيد الحساب.");
+        window.location.href = "/login";
+      }
     } catch (err) {
-      setError(err.message || "رمز التحقق غير صحيح");
+      setError(err.message || "فشل إنشاء الحساب");
     } finally {
       setLoading(false);
     }
   };
-
-  const handleResend = async () => {
-    setError("");
-    try {
-      await supabase.auth.resend({
-        type: 'signup',
-        email,
-      });
-      toast({
-        title: "تم إرسال الرمز",
-        description: "تحقق من بريدك الإلكتروني للحصول على الرمز الجديد.",
-      });
-    } catch (err) {
-      setError(err.message || "فشل إعادة إرسال الرمز");
-    }
-  };
-
-  const handleGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + safeReturnTo()
-      }
-    });
-    if (error) setError(error.message);
-  };
-
-  if (showOtp) {
-    return (
-      <AuthLayout
-        icon={Mail}
-        title="تأكيد البريد الإلكتروني"
-        subtitle={`أرسلنا رمزاً إلى ${email}`}
-      >
-        {error && (
-          <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-            {error}
-          </div>
-        )}
-        <div className="flex justify-center mb-6" dir="ltr">
-          <InputOTP
-            maxLength={6}
-            value={otpCode}
-            onChange={setOtpCode}
-            autoFocus
-            autoComplete="one-time-code"
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-        <Button
-          className="w-full h-12 font-medium"
-          onClick={handleVerify}
-          disabled={loading || otpCode.length < 6}
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              جارٍ التحقق...
-            </>
-          ) : (
-            "تأكيد"
-          )}
-        </Button>
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          لم تستلم الرمز؟{" "}
-          <button onClick={handleResend} className="text-primary font-medium hover:underline">
-            إعادة الإرسال
-          </button>
-        </p>
-      </AuthLayout>
-    );
-  }
 
   return (
     <AuthLayout
@@ -165,24 +62,6 @@ export default function Register() {
         </>
       }
     >
-      <Button
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
-        onClick={handleGoogle}
-      >
-        <GoogleIcon className="w-5 h-5 mr-2" />
-        المتابعة باستخدام Google
-      </Button>
-
-      <div className="relative mb-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">أو</span>
-        </div>
-      </div>
-
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
           {error}
