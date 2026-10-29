@@ -21,26 +21,34 @@ export default function Register() {
   const [otpCode, setOtpCode] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (password !== confirmPassword) {
-      setError("كلمات المرور غير متطابقة");
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) throw error;
+  e.preventDefault();
+  setError("");
+  if (password !== confirmPassword) {
+    setError("كلمات المرور غير متطابقة");
+    return;
+  }
+  setLoading(true);
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) throw error;
+
+    // التحقق: إذا كان تأكيد البريد معطلاً، سيعيد Supabase جلسة (session) مباشرة
+    if (data.session) {
+      // المستخدم مسجل ومصادق عليه فوراً
+      window.location.href = safeReturnTo(); 
+    } else {
+      // في حال كان تأكيد البريد مفعلاً (لأي سبب)، نعرض شاشة OTP
       setShowOtp(true);
-    } catch (err) {
-      setError(err.message || "فشل إنشاء الحساب");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    setError(err.message || "فشل إنشاء الحساب");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleVerify = async () => {
     setError("");
